@@ -1,0 +1,17 @@
+Files:
+tests/test-rwlock1.c
+tests/test-lock.c
+
+Depends-on:
+thread
+usleep
+yield
+
+configure.ac:
+AC_CHECK_HEADERS_ONCE([semaphore.h])
+
+Makefile.am:
+TESTS += test-rwlock1 test-lock
+check_PROGRAMS += test-rwlock1 test-lock
+test_rwlock1_LDADD = $(LDADD) @LIBMULTITHREAD@ @YIELD_LIB@
+test_lock_LDADD = $(LDADD) @LIBMULTITHREAD@ @YIELD_LIB@
