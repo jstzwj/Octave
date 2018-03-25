@@ -1,0 +1,53 @@
+syntax: regexp
+# The recurrent (^|/) idiom in the regexps below should be understood
+# to mean "at any directory" while the ^ idiom means "from the
+# project's top-level directory".
+
+# gnulib makes these silly backup files
+.~$
+
+# This directory gets created by gnulib during the build.
+# It contains no Octave files.
+^libgnu($|/)
+
+# This directory mostly contains cruft during build time, but it does
+# contain some Octave code, so we gotta be a bit more careful about
+# what we ignore here
+^m4/(?!ax_).+\.m4$
+
+# Emacs tools create these
+(^|/)TAGS$
+(^|/)semantic.cache$
+
+(/|^)Makefile\.in$
+^INSTALL$
+
+^aclocal\.m4$
+^autom4te\.cache($|/)
+^build-aux/config\.(guess|rpath|sub)$
+^build-aux/depcomp$
+^build-aux/install-sh$
+^build-aux/ltmain\.sh$
+^build-aux/mdate-sh$
+^build-aux/missing$
+^build-aux/move-if-change$
+^build-aux/texinfo\.tex$
+^build-aux/ylwrap$
+^config\.in\.h$
+^configure$
+
+# e.g. doc/faq/OctaveFAQ.info
+#      doc/interpreter/octave.info-4
+^doc/\w+/\w+\.info(-\d+)?$
+
+^doc/\w+/stamp-(vti|\d+)$
+^doc/\w+/version-\w+\.texi$
+^doc/interpreter/images\.mk$
+
+# e.g. liboctave/operators/smx-op-inc.mk
+^liboctave/operators/\w+-op-\w+\.mk$
+
+^libinterp/dldfcn/module\.mk$
+
+# DOCSTRINGS files are built in the source tree
+^(libinterp|scripts)/DOCSTRINGS$

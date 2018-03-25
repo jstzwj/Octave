@@ -7953,16 +7953,16 @@ movsum ([1, 2; 3, 4; 5, 6], [1,1])
   try
     {
       int kb,kf;
-      idx_vector n = args(1).index_vector ();
-      if (n.length () == 1 && n.xelem(0) > 0)
+      Array<octave_idx_type> n = args(1).octave_idx_type_vector_value ();
+      if (n.numel () == 1 && n(0) > 0)
         {
-          kb = n.xelem(0) / 2;
-          kf = (n.xelem(0) - 1) / 2;
+          kb = n(0) / 2;
+          kf = (n(0) - 1) / 2;
         }
-      else if (n.length () == 2 && n.xelem(0) >= 0 && n.xelem(0) >= 1)
+      else if (n.numel () == 2 && n(0) >= 0 && n(0) >= 1)
         {
-          kb = n.xelem(0);
-          kf = n.xelem(1);
+          kb = n(0);
+          kf = n(1);
         }
       else
         {

@@ -1530,36 +1530,67 @@ along with Octave; see the file COPYING.  If not, see
   octave_idx_type nc = cols ();                                               \
                                                                               \
   RET_TYPE retval;                                                            \
+  printf("start: nr = %ld,nc = %ld",nr,nc);\
                                                                               \
   if (nr > 0 && nc > 0)                                                       \
     {                                                                         \
       if ((nr == 1 && dim == -1) || dim == 1)                                 \
         /* Ugly!! Is there a better way? */                                   \
-        retval = transpose (). FCN (0) .transpose ();                         \
+        retval = transpose (). FCN (kb, kf, 0) .transpose ();                 \
       else                                                                    \
         {                                                                     \
-          retval = RET_TYPE(nr, nc);                                          \
-          octave_idx_type ii = 0;                                             \
-          for (octave_idx_type i = 0; i < nc; ++i)                            \
+          octave_idx_type nel = 0;                                            \
+          for (octave_idx_type i = 0; i < nc; i++)                            \
             {                                                                 \
-              for (octave_idx_type j = 0; j < nr; ++j)                        \
+              for (octave_idx_type j = 0; j < nr; j++)                        \
                 {                                                             \
-                  octave_idx_type clamp_kb = j - kb;                          \
-                  octave_idx_type clamp_kf = j + kf + 1;                      \
+                  printf("nel :i = %ld, j= %ld", i, j);\
+                  octave_idx_type clamp_kb = j - kf;                          \
+                  octave_idx_type clamp_kf = j + kb + 2;                      \
                   if (clamp_kb < 0) clamp_kb = 0;                             \
                   if (clamp_kf > nr) clamp_kf = nr;                           \
                                                                               \
                   for (octave_idx_type k = cidx(i); k < cidx(i + 1) ;++k)     \
                     {                                                         \
+                    printf("k = %ld", k);\
                       if (ridx(k) >= clamp_kb && ridx(k) < clamp_kf)          \
                         {                                                     \
-                          retval.data(ii) += data(k);                         \
-                          retval.ridx(ii) = j;                                \
-                          ++ii;                                               \
+                          ++nel;                                              \
+                          break;                                              \
                         }                                                     \
                     }                                                         \
                 }                                                             \
-              }                                                               \
+            }                                                                 \
+          printf("ok");                                                       \
+          retval = RET_TYPE(nr, nc, nel);                                     \
+          retval.cidx (0) = 0;                                                \
+          octave_idx_type ii = 0;                                             \
+          for (octave_idx_type i = 0; i < nc; ++i)                            \
+            {                                                                 \
+              for (octave_idx_type j = 0; j < nr; ++j)                        \
+                {                                                             \
+                  printf("fill: i = %ld, j= %ld",i,j);\
+                  octave_idx_type clamp_kb = j - kf;                          \
+                  octave_idx_type clamp_kf = j + kb + 2;                      \
+                  if (clamp_kb < 0) clamp_kb = 0;                             \
+                  if (clamp_kf > nr) clamp_kf = nr;                           \
+                                                                              \
+                  bool find_flag = false;                                     \
+                  for (octave_idx_type k = cidx(i); k < cidx(i + 1) ;++k)     \
+                    {                                                         \
+                      printf("k = %ld",k);\
+                      if (ridx(k) >= clamp_kb && ridx(k) < clamp_kf)          \
+                        {                                                     \
+                          retval.data(ii) += data(k);                         \
+                          if (!find_flag)                                     \
+                            retval.ridx(ii) = j;                              \
+                          find_flag = true;                                   \
+                        }                                                     \
+                    }                                                         \
+                  if (find_flag) ++ii;                                        \
+                }                                                             \
+              retval.cidx (i + 1) = ii;                                       \
+            }                                                                 \
           }                                                                   \
     }                                                                         \
   else                                                                        \
