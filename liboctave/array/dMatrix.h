@@ -328,6 +328,9 @@ public:
   Matrix cumprod (int dim = -1) const;
   Matrix cumsum (int dim = -1) const;
   Matrix movsum (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  Matrix movprod (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  Matrix movmax (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  Matrix movmin (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
   Matrix prod (int dim = -1) const;
   Matrix sum (int dim = -1) const;
   Matrix sumsq (int dim = -1) const;

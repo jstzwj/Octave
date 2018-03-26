@@ -406,6 +406,9 @@ public:
   FloatComplexMatrix cumprod (int dim = -1) const;
   FloatComplexMatrix cumsum (int dim = -1) const;
   FloatComplexMatrix movsum (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  FloatComplexMatrix movprod (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  FloatComplexMatrix movmax (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  FloatComplexMatrix movmin (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
   FloatComplexMatrix prod (int dim = -1) const;
   FloatComplexMatrix sum (int dim = -1) const;
   FloatComplexMatrix sumsq (int dim = -1) const;

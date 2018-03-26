@@ -384,6 +384,9 @@ public:
   ComplexMatrix cumprod (int dim = -1) const;
   ComplexMatrix cumsum (int dim = -1) const;
   ComplexMatrix movsum (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  ComplexMatrix movprod (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  ComplexMatrix movmax (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  ComplexMatrix movmin (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
 
   ComplexMatrix prod (int dim = -1) const;
   ComplexMatrix sum (int dim = -1) const;

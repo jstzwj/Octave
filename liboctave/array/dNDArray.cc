@@ -735,6 +735,24 @@ NDArray::movsum (octave_idx_type kb, octave_idx_type kf, int dim) const
 }
 
 NDArray
+NDArray::movprod (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<double, double> (*this, dim, kb, kf, mx_inline_movprod);
+}
+
+NDArray
+NDArray::movmax (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<double, double> (*this, dim, kb, kf, mx_inline_movmax);
+}
+
+NDArray
+NDArray::movmin (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<double, double> (*this, dim, kb, kf, mx_inline_movmin);
+}
+
+NDArray
 NDArray::concat (const NDArray& rb, const Array<octave_idx_type>& ra_idx)
 {
   if (rb.numel () > 0)

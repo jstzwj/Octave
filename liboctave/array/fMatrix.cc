@@ -2571,6 +2571,24 @@ FloatMatrix::movsum (octave_idx_type kb, octave_idx_type kf, int dim) const
 }
 
 FloatMatrix
+FloatMatrix::movprod (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return FloatNDArray::movprod (kb, kf, dim);
+}
+
+FloatMatrix
+FloatMatrix::movmax (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return FloatNDArray::movmax (kb, kf, dim);
+}
+
+FloatMatrix
+FloatMatrix::movmin (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return FloatNDArray::movmin (kb, kf, dim);
+}
+
+FloatMatrix
 FloatMatrix::prod (int dim) const
 {
   return FloatNDArray::prod (dim);

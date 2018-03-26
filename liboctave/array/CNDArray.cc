@@ -638,6 +638,24 @@ ComplexNDArray::movsum (octave_idx_type kb, octave_idx_type kf, int dim) const
 }
 
 ComplexNDArray
+ComplexNDArray::movprod (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<Complex, Complex> (*this, dim, kb, kf, mx_inline_movprod);
+}
+
+ComplexNDArray
+ComplexNDArray::movmax (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<Complex, Complex> (*this, dim, kb, kf, mx_inline_movmax);
+}
+
+ComplexNDArray
+ComplexNDArray::movmin (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<Complex, Complex> (*this, dim, kb, kf, mx_inline_movmin);
+}
+
+ComplexNDArray
 ComplexNDArray::concat (const ComplexNDArray& rb,
                         const Array<octave_idx_type>& ra_idx)
 {

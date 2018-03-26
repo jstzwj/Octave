@@ -7475,6 +7475,24 @@ SparseMatrix::movsum (octave_idx_type kb, octave_idx_type kf, int dim) const
 }
 
 SparseMatrix
+SparseMatrix::movprod (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  SPARSE_MOVPROD (SparseMatrix, double, movprod);
+}
+
+SparseMatrix
+SparseMatrix::movmax (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  SPARSE_MOVMAX (SparseMatrix, double, movmax);
+}
+
+SparseMatrix
+SparseMatrix::movmin (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  SPARSE_MOVMIN (SparseMatrix, double, movmin);
+}
+
+SparseMatrix
 SparseMatrix::diag (octave_idx_type k) const
 {
   return MSparse<double>::diag (k);

@@ -2978,6 +2978,24 @@ ComplexMatrix::movsum (octave_idx_type kb, octave_idx_type kf, int dim) const
 }
 
 ComplexMatrix
+ComplexMatrix::movprod (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return ComplexNDArray::movprod (kb, kf, dim);
+}
+
+ComplexMatrix
+ComplexMatrix::movmax (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return ComplexNDArray::movmax (kb, kf, dim);
+}
+
+ComplexMatrix
+ComplexMatrix::movmin (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return ComplexNDArray::movmin (kb, kf, dim);
+}
+
+ComplexMatrix
 ComplexMatrix::prod (int dim) const
 {
   return ComplexNDArray::prod (dim);

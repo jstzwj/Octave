@@ -342,6 +342,9 @@ public:
   FloatMatrix cumprod (int dim = -1) const;
   FloatMatrix cumsum (int dim = -1) const;
   FloatMatrix movsum (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  FloatMatrix movprod (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  FloatMatrix movmax (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  FloatMatrix movmin (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
   FloatMatrix prod (int dim = -1) const;
   FloatMatrix sum (int dim = -1) const;
   FloatMatrix sumsq (int dim = -1) const;

@@ -693,6 +693,24 @@ FloatNDArray::movsum (octave_idx_type kb, octave_idx_type kf, int dim) const
 }
 
 FloatNDArray
+FloatNDArray::movprod (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<float, float> (*this, dim, kb, kf, mx_inline_movprod);
+}
+
+FloatNDArray
+FloatNDArray::movmax (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<float, float> (*this, dim, kb, kf, mx_inline_movmax);
+}
+
+FloatNDArray
+FloatNDArray::movmin (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<float, float> (*this, dim, kb, kf, mx_inline_movmin);
+}
+
+FloatNDArray
 FloatNDArray::concat (const FloatNDArray& rb,
                       const Array<octave_idx_type>& ra_idx)
 {

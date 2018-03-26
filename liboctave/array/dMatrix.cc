@@ -2562,6 +2562,24 @@ Matrix::movsum (octave_idx_type kb, octave_idx_type kf, int dim) const
 }
 
 Matrix
+Matrix::movprod (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return NDArray::movprod (kb, kf, dim);
+}
+
+Matrix
+Matrix::movmax (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return NDArray::movmax (kb, kf, dim);
+}
+
+Matrix
+Matrix::movmin (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return NDArray::movmin (kb, kf, dim);
+}
+
+Matrix
 Matrix::prod (int dim) const
 {
   return NDArray::prod (dim);

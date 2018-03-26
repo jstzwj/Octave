@@ -7942,7 +7942,7 @@ movsum ([1, 2; 3, 4; 5, 6], [1,1])
   int dim = -1;
   if (nargin == 3)
     {
-      dim = args(3).int_value () - 1;
+      dim = args(2).int_value () - 1;
       if (dim < 0)
         error ("movsum: invalid dimension argument = %d", dim + 1);
     }
@@ -7950,98 +7950,477 @@ movsum ([1, 2; 3, 4; 5, 6], [1,1])
   octave_value retval;
   octave_value arg = args(0);
   
-  try
+  octave_idx_type kb,kf;
+  Array<octave_idx_type> n = args(1).octave_idx_type_vector_value ();
+  if (n.numel () == 1 && n(0) > 0)
     {
-      int kb,kf;
-      Array<octave_idx_type> n = args(1).octave_idx_type_vector_value ();
-      if (n.numel () == 1 && n(0) > 0)
+      kb = n(0) / 2;
+      kf = (n(0) - 1) / 2;
+    }
+  else if (n.numel () == 2 && n(0) >= 0 && n(0) >= 1)
+    {
+      kb = n(0);
+      kf = n(1);
+    }
+  else
+    {
+      error ("movsum: Window length must be a finite positive scalar or 2-element vector of finite nonnegative scalars");
+    }
+
+  switch (arg.builtin_type ())
+    {
+    case btyp_double:
+      if (arg.issparse ())
+        retval = arg.sparse_matrix_value ().movsum (kb, kf, dim);
+      else
+        retval = arg.array_value ().movsum (kb, kf, dim);
+      break;
+    case btyp_complex:
+      if (arg.issparse ())
+        retval = arg.sparse_complex_matrix_value ().movsum (kb, kf, dim);
+      else
+        retval = arg.complex_array_value ().movsum (kb, kf, dim);
+      break;
+    case btyp_float:
+      if (isdouble)
+        retval = arg.array_value ().movsum (kb, kf, dim);
+      else
+        retval = arg.float_array_value ().movsum (kb, kf, dim);
+      break;
+    case btyp_float_complex:
+      if (isdouble)
+        retval = arg.complex_array_value ().movsum (kb, kf, dim);
+      else
+        retval = arg.float_complex_array_value ().movsum (kb, kf, dim);
+      break;
+
+#define MAKE_INT_BRANCH(X)                                              \
+      case btyp_ ## X:                                                  \
+        if (isnative)                                                   \
+          retval = arg.X ## _array_value ().movsum (kb, kf, dim);       \
+        else                                                            \
+          retval = arg.array_value ().movsum (kb, kf, dim);             \
+        break;
+
+      MAKE_INT_BRANCH (int8);
+      MAKE_INT_BRANCH (int16);
+      MAKE_INT_BRANCH (int32);
+      MAKE_INT_BRANCH (int64);
+      MAKE_INT_BRANCH (uint8);
+      MAKE_INT_BRANCH (uint16);
+      MAKE_INT_BRANCH (uint32);
+      MAKE_INT_BRANCH (uint64);
+
+#undef MAKE_INT_BRANCH
+
+    case btyp_bool:
+      if (arg.issparse ())
         {
-          kb = n(0) / 2;
-          kf = (n(0) - 1) / 2;
-        }
-      else if (n.numel () == 2 && n(0) >= 0 && n(0) >= 1)
-        {
-          kb = n(0);
-          kf = n(1);
+          SparseMatrix cs = arg.sparse_matrix_value ().movsum (kb, kf, dim);
+          if (isnative)
+            retval = cs != 0.0;
+          else
+            retval = cs;
         }
       else
         {
-          error ("movsum: Window length must be a finite positive scalar or 2-element vector of finite nonnegative scalars");
+          NDArray cs = arg.array_value ().movsum (kb, kf, dim);
+          if (isnative)
+            retval = cs != 0.0;
+          else
+            retval = cs;
         }
+      break;
 
-      switch (arg.builtin_type ())
-        {
-        case btyp_double:
-          if (arg.issparse ())
-            retval = arg.sparse_matrix_value ().movsum (kb, kf, dim);
-          else
-            retval = arg.array_value ().movsum (kb, kf, dim);
-          break;
-        case btyp_complex:
-          if (arg.issparse ())
-            retval = arg.sparse_complex_matrix_value ().movsum (kb, kf, dim);
-          else
-            retval = arg.complex_array_value ().movsum (kb, kf, dim);
-          break;
-        case btyp_float:
-          if (isdouble)
-            retval = arg.array_value ().movsum (kb, kf, dim);
-          else
-            retval = arg.float_array_value ().movsum (kb, kf, dim);
-          break;
-        case btyp_float_complex:
-          if (isdouble)
-            retval = arg.complex_array_value ().movsum (kb, kf, dim);
-          else
-            retval = arg.float_complex_array_value ().movsum (kb, kf, dim);
-          break;
-
-    #define MAKE_INT_BRANCH(X)                                              \
-          case btyp_ ## X:                                                  \
-            if (isnative)                                                   \
-              retval = arg.X ## _array_value ().movsum (kb, kf, dim);       \
-            else                                                            \
-              retval = arg.array_value ().movsum (kb, kf, dim);             \
-            break;
-
-          MAKE_INT_BRANCH (int8);
-          MAKE_INT_BRANCH (int16);
-          MAKE_INT_BRANCH (int32);
-          MAKE_INT_BRANCH (int64);
-          MAKE_INT_BRANCH (uint8);
-          MAKE_INT_BRANCH (uint16);
-          MAKE_INT_BRANCH (uint32);
-          MAKE_INT_BRANCH (uint64);
-
-    #undef MAKE_INT_BRANCH
-
-        case btyp_bool:
-          if (arg.issparse ())
-            {
-              SparseMatrix cs = arg.sparse_matrix_value ().movsum (kb, kf, dim);
-              if (isnative)
-                retval = cs != 0.0;
-              else
-                retval = cs;
-            }
-          else
-            {
-              NDArray cs = arg.array_value ().movsum (kb, kf, dim);
-              if (isnative)
-                retval = cs != 0.0;
-              else
-                retval = cs;
-            }
-          break;
-
-        default:
-          err_wrong_type_arg ("movsum", arg);
-        }
+    default:
+      err_wrong_type_arg ("movsum", arg);
     }
-  catch (const octave::index_exception& e)
+
+  return retval;
+}
+
+DEFUN (movprod, args, ,
+       doc: /* -*- texinfo -*-
+@deftypefn  {} {} movprod (@var{x}, @var{k})
+@deftypefnx {} {} movprod (@var{x}, @var{[kb,kf]})
+@deftypefnx {} {} movprod (@var{x}, @dots{}, @var{dim})
+Return products of local k points along dimension @var{dim}.
+
+If @var{dim} is omitted, it defaults to the first non-singleton dimension.
+For example:
+
+@example
+@group
+movprod ([1, 2; 3, 4; 5, 6], [1,1])
+   @result{}  3   8
+      15  48
+      15  24
+@end group
+@end example
+@seealso{movmean, movmax, movmin, cumprod}
+@end deftypefn */)
+{
+  int nargin = args.length ();
+
+  bool isnative = false;
+  bool isdouble = false;
+
+  if (nargin < 2 || nargin > 3)
+    print_usage ();
+
+  int dim = -1;
+  if (nargin == 3)
     {
-      index_error ("movsum: invalid N value %s. %s",
-                   e.idx (), e.details ());
+      dim = args(2).int_value () - 1;
+      if (dim < 0)
+        error ("movprod: invalid dimension argument = %d", dim + 1);
+    }
+
+  octave_value retval;
+  octave_value arg = args(0);
+
+  octave_idx_type kb,kf;
+  Array<octave_idx_type> n = args(1).octave_idx_type_vector_value ();
+  if (n.numel () == 1 && n(0) > 0)
+    {
+      kb = n(0) / 2;
+      kf = (n(0) - 1) / 2;
+    }
+  else if (n.numel () == 2 && n(0) >= 0 && n(0) >= 1)
+    {
+      kb = n(0);
+      kf = n(1);
+    }
+  else
+    {
+      error ("movprod: Window length must be a finite positive scalar or 2-element vector of finite nonnegative scalars");
+    }
+
+  switch (arg.builtin_type ())
+    {
+    case btyp_double:
+      if (arg.issparse ())
+        retval = arg.sparse_matrix_value ().movprod (kb, kf, dim);
+      else
+        retval = arg.array_value ().movprod (kb, kf, dim);
+      break;
+    case btyp_complex:
+      if (arg.issparse ())
+        retval = arg.sparse_complex_matrix_value ().movprod (kb, kf, dim);
+      else
+        retval = arg.complex_array_value ().movprod (kb, kf, dim);
+      break;
+    case btyp_float:
+      if (isdouble)
+        retval = arg.array_value ().movprod (kb, kf, dim);
+      else
+        retval = arg.float_array_value ().movprod (kb, kf, dim);
+      break;
+    case btyp_float_complex:
+      if (isdouble)
+        retval = arg.complex_array_value ().movprod (kb, kf, dim);
+      else
+        retval = arg.float_complex_array_value ().movprod (kb, kf, dim);
+      break;
+
+#define MAKE_INT_BRANCH(X)                                               \
+      case btyp_ ## X:                                                   \
+        if (isnative)                                                    \
+          retval = arg.X ## _array_value ().movprod (kb, kf, dim);       \
+        else                                                             \
+          retval = arg.array_value ().movprod (kb, kf, dim);             \
+        break;
+
+      MAKE_INT_BRANCH (int8);
+      MAKE_INT_BRANCH (int16);
+      MAKE_INT_BRANCH (int32);
+      MAKE_INT_BRANCH (int64);
+      MAKE_INT_BRANCH (uint8);
+      MAKE_INT_BRANCH (uint16);
+      MAKE_INT_BRANCH (uint32);
+      MAKE_INT_BRANCH (uint64);
+
+#undef MAKE_INT_BRANCH
+
+    case btyp_bool:
+      if (arg.issparse ())
+        {
+          SparseMatrix cs = arg.sparse_matrix_value ().movprod (kb, kf, dim);
+          if (isnative)
+            retval = cs != 0.0;
+          else
+            retval = cs;
+        }
+      else
+        {
+          NDArray cs = arg.array_value ().movprod (kb, kf, dim);
+          if (isnative)
+            retval = cs != 0.0;
+          else
+            retval = cs;
+        }
+      break;
+
+    default:
+      err_wrong_type_arg ("movprod", arg);
+    }
+
+  return retval;
+}
+
+DEFUN (movmax, args, ,
+       doc: /* -*- texinfo -*-
+@deftypefn  {} {} movmax (@var{x}, @var{k})
+@deftypefnx {} {} movmax (@var{x}, @var{[kb,kf]})
+@deftypefnx {} {} movmax (@var{x}, @dots{}, @var{dim})
+Return products of local k points along dimension @var{dim}.
+
+If @var{dim} is omitted, it defaults to the first non-singleton dimension.
+For example:
+
+@example
+@group
+movmax ([1, 2; 3, 4; 5, 6], [1,1])
+   @result{}  3   4
+       5   4
+       5   6
+@end group
+@end example
+@seealso{movmean, movprod, movmin, cumprod}
+@end deftypefn */)
+{
+  int nargin = args.length ();
+
+  bool isnative = false;
+  bool isdouble = false;
+
+  if (nargin < 2 || nargin > 3)
+    print_usage ();
+
+  int dim = -1;
+  if (nargin == 3)
+    {
+      dim = args(2).int_value () - 1;
+      if (dim < 0)
+        error ("movmax: invalid dimension argument = %d", dim + 1);
+    }
+
+  octave_value retval;
+  octave_value arg = args(0);
+
+  octave_idx_type kb,kf;
+  Array<octave_idx_type> n = args(1).octave_idx_type_vector_value ();
+  if (n.numel () == 1 && n(0) > 0)
+    {
+      kb = n(0) / 2;
+      kf = (n(0) - 1) / 2;
+    }
+  else if (n.numel () == 2 && n(0) >= 0 && n(0) >= 1)
+    {
+      kb = n(0);
+      kf = n(1);
+    }
+  else
+    {
+      error ("movmax: Window length must be a finite positive scalar or 2-element vector of finite nonnegative scalars");
+    }
+
+  switch (arg.builtin_type ())
+    {
+    case btyp_double:
+      if (arg.issparse ())
+        retval = arg.sparse_matrix_value ().movmax (kb, kf, dim);
+      else
+        retval = arg.array_value ().movmax (kb, kf, dim);
+      break;
+    case btyp_complex:
+      if (arg.issparse ())
+        retval = arg.sparse_complex_matrix_value ().movmax (kb, kf, dim);
+      else
+        retval = arg.complex_array_value ().movmax (kb, kf, dim);
+      break;
+    case btyp_float:
+      if (isdouble)
+        retval = arg.array_value ().movmax (kb, kf, dim);
+      else
+        retval = arg.float_array_value ().movmax (kb, kf, dim);
+      break;
+    case btyp_float_complex:
+      if (isdouble)
+        retval = arg.complex_array_value ().movmax (kb, kf, dim);
+      else
+        retval = arg.float_complex_array_value ().movmax (kb, kf, dim);
+      break;
+
+#define MAKE_INT_BRANCH(X)                                               \
+      case btyp_ ## X:                                                   \
+        if (isnative)                                                    \
+          retval = arg.X ## _array_value ().movmax (kb, kf, dim);       \
+        else                                                             \
+          retval = arg.array_value ().movmax (kb, kf, dim);             \
+        break;
+
+      MAKE_INT_BRANCH (int8);
+      MAKE_INT_BRANCH (int16);
+      MAKE_INT_BRANCH (int32);
+      MAKE_INT_BRANCH (int64);
+      MAKE_INT_BRANCH (uint8);
+      MAKE_INT_BRANCH (uint16);
+      MAKE_INT_BRANCH (uint32);
+      MAKE_INT_BRANCH (uint64);
+
+#undef MAKE_INT_BRANCH
+
+    case btyp_bool:
+      if (arg.issparse ())
+        {
+          SparseMatrix cs = arg.sparse_matrix_value ().movmax (kb, kf, dim);
+          if (isnative)
+            retval = cs != 0.0;
+          else
+            retval = cs;
+        }
+      else
+        {
+          NDArray cs = arg.array_value ().movmax (kb, kf, dim);
+          if (isnative)
+            retval = cs != 0.0;
+          else
+            retval = cs;
+        }
+      break;
+
+    default:
+      err_wrong_type_arg ("movmax", arg);
+    }
+
+  return retval;
+}
+
+DEFUN (movmin, args, ,
+       doc: /* -*- texinfo -*-
+@deftypefn  {} {} movmin (@var{x}, @var{k})
+@deftypefnx {} {} movmin (@var{x}, @var{[kb,kf]})
+@deftypefnx {} {} movmin (@var{x}, @dots{}, @var{dim})
+Return products of local k points along dimension @var{dim}.
+
+If @var{dim} is omitted, it defaults to the first non-singleton dimension.
+For example:
+
+@example
+@group
+movmin ([1, 2; 3, 4; 5, 6], [1,1])
+   @result{}  1   2
+       1   2
+       3   4
+@end group
+@end example
+@seealso{movmean, movprod, movsum, cumprod}
+@end deftypefn */)
+{
+  int nargin = args.length ();
+
+  bool isnative = false;
+  bool isdouble = false;
+
+  if (nargin < 2 || nargin > 3)
+    print_usage ();
+
+  int dim = -1;
+  if (nargin == 3)
+    {
+      dim = args(2).int_value () - 1;
+      if (dim < 0)
+        error ("movmin: invalid dimension argument = %d", dim + 1);
+    }
+
+  octave_value retval;
+  octave_value arg = args(0);
+
+  octave_idx_type kb,kf;
+  Array<octave_idx_type> n = args(1).octave_idx_type_vector_value ();
+  if (n.numel () == 1 && n(0) > 0)
+    {
+      kb = n(0) / 2;
+      kf = (n(0) - 1) / 2;
+    }
+  else if (n.numel () == 2 && n(0) >= 0 && n(0) >= 1)
+    {
+      kb = n(0);
+      kf = n(1);
+    }
+  else
+    {
+      error ("movmin: Window length must be a finite positive scalar or 2-element vector of finite nonnegative scalars");
+    }
+
+  switch (arg.builtin_type ())
+    {
+    case btyp_double:
+      if (arg.issparse ())
+        retval = arg.sparse_matrix_value ().movmin (kb, kf, dim);
+      else
+        retval = arg.array_value ().movmin (kb, kf, dim);
+      break;
+    case btyp_complex:
+      if (arg.issparse ())
+        retval = arg.sparse_complex_matrix_value ().movmin (kb, kf, dim);
+      else
+        retval = arg.complex_array_value ().movmin (kb, kf, dim);
+      break;
+    case btyp_float:
+      if (isdouble)
+        retval = arg.array_value ().movmin (kb, kf, dim);
+      else
+        retval = arg.float_array_value ().movmin (kb, kf, dim);
+      break;
+    case btyp_float_complex:
+      if (isdouble)
+        retval = arg.complex_array_value ().movmin (kb, kf, dim);
+      else
+        retval = arg.float_complex_array_value ().movmin (kb, kf, dim);
+      break;
+
+#define MAKE_INT_BRANCH(X)                                               \
+      case btyp_ ## X:                                                   \
+        if (isnative)                                                    \
+          retval = arg.X ## _array_value ().movmin (kb, kf, dim);       \
+        else                                                             \
+          retval = arg.array_value ().movmin (kb, kf, dim);             \
+        break;
+
+      MAKE_INT_BRANCH (int8);
+      MAKE_INT_BRANCH (int16);
+      MAKE_INT_BRANCH (int32);
+      MAKE_INT_BRANCH (int64);
+      MAKE_INT_BRANCH (uint8);
+      MAKE_INT_BRANCH (uint16);
+      MAKE_INT_BRANCH (uint32);
+      MAKE_INT_BRANCH (uint64);
+
+#undef MAKE_INT_BRANCH
+
+    case btyp_bool:
+      if (arg.issparse ())
+        {
+          SparseMatrix cs = arg.sparse_matrix_value ().movmin (kb, kf, dim);
+          if (isnative)
+            retval = cs != 0.0;
+          else
+            retval = cs;
+        }
+      else
+        {
+          NDArray cs = arg.array_value ().movmin (kb, kf, dim);
+          if (isnative)
+            retval = cs != 0.0;
+          else
+            retval = cs;
+        }
+      break;
+
+    default:
+      err_wrong_type_arg ("movmin", arg);
     }
 
   return retval;

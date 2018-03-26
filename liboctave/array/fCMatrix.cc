@@ -3002,6 +3002,24 @@ FloatComplexMatrix::movsum (octave_idx_type kb, octave_idx_type kf, int dim) con
 }
 
 FloatComplexMatrix
+FloatComplexMatrix::movprod (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return FloatComplexNDArray::movprod (kb, kf, dim);
+}
+
+FloatComplexMatrix
+FloatComplexMatrix::movmax (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return FloatComplexNDArray::movmax (kb, kf, dim);
+}
+
+FloatComplexMatrix
+FloatComplexMatrix::movmin (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return FloatComplexNDArray::movmin (kb, kf, dim);
+}
+
+FloatComplexMatrix
 FloatComplexMatrix::prod (int dim) const
 {
   return FloatComplexNDArray::prod (dim);

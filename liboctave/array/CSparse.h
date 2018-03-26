@@ -444,6 +444,9 @@ public:
   SparseMatrix abs (void) const;
 
   SparseComplexMatrix movsum (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  SparseComplexMatrix movprod (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  SparseComplexMatrix movmax (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  SparseComplexMatrix movmin (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
 
   SparseComplexMatrix diag (octave_idx_type k = 0) const;
 

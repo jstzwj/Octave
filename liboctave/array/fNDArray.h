@@ -111,6 +111,9 @@ public:
   FloatNDArray diff (octave_idx_type order = 1, int dim = -1) const;
 
   FloatNDArray movsum (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  FloatNDArray movprod (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  FloatNDArray movmax (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  FloatNDArray movmin (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
 
   FloatNDArray& insert (const FloatNDArray& a,
                         octave_idx_type r, octave_idx_type c);

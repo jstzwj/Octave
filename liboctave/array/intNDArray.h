@@ -100,6 +100,9 @@ public:
   intNDArray diff (octave_idx_type order = 1, int dim = -1) const;
 
   intNDArray movsum (octave_idx_type kb, octave_idx_type kf, int dim) const;
+  intNDArray movprod (octave_idx_type kb, octave_idx_type kf, int dim) const;
+  intNDArray movmax (octave_idx_type kb, octave_idx_type kf, int dim) const;
+  intNDArray movmin (octave_idx_type kb, octave_idx_type kf, int dim) const;
 
   intNDArray abs (void) const;
   intNDArray signum (void) const;

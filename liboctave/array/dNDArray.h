@@ -117,6 +117,9 @@ public:
   NDArray diff (octave_idx_type order = 1, int dim = -1) const;
 
   NDArray movsum (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  NDArray movprod (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  NDArray movmax (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
+  NDArray movmin (octave_idx_type kb, octave_idx_type kf, int dim = -1) const;
 
   NDArray& insert (const NDArray& a, octave_idx_type r, octave_idx_type c);
   NDArray& insert (const NDArray& a, const Array<octave_idx_type>& ra_idx);

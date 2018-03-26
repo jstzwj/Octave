@@ -305,3 +305,25 @@ intNDArray<T>::movsum (octave_idx_type kb, octave_idx_type kf, int dim) const
 {
   return do_mx_mov_op<T, T> (*this, dim, kb, kf, mx_inline_movsum);
 }
+
+template <typename T>
+intNDArray<T>
+intNDArray<T>::movprod (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<T, T> (*this, dim, kb, kf, mx_inline_movprod);
+}
+
+template <typename T>
+intNDArray<T>
+intNDArray<T>::movmax (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<T, T> (*this, dim, kb, kf, mx_inline_movmax);
+}
+
+template <typename T>
+intNDArray<T>
+intNDArray<T>::movmin (octave_idx_type kb, octave_idx_type kf, int dim) const
+{
+  return do_mx_mov_op<T, T> (*this, dim, kb, kf, mx_inline_movmin);
+}
+
